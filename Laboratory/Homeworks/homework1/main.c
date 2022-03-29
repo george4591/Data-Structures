@@ -1,11 +1,40 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+
+void swapNames(char *name1, char *name2) {
+    char *tempName = (char *) malloc(strlen(name1) + 1);
+    strcpy(tempName, name1);
+    strcpy(name1, name2);
+    strcpy(name2, tempName);
+
+    free(tempName);
+}
+
+void sortListOfNames(char *names[], int length)
+{
+    for (int it = 0; it < length; ++it) {
+        for (int it2 = 0; it2 < length - it - 1; it2++) {
+            if (strcmp(names[it2], names[it2 + 1]) > 0) {
+                swapNames(names[it2], names[it2 + 1]);
+            }
+        }
+    }
+}
+
+void printNames(char *names[], int length)
+{
+    for (int i = 0; i < length; i++) {
+        printf("%s\n", names[i]);
+    }
+}
+
 int main() {
     FILE *pFile = fopen("Data.txt", "r");
-    char buffer[128];
 
+    char buffer[128];
     char *names[50];
     int index = 0;
 
@@ -21,24 +50,8 @@ int main() {
             fscanf(pFile, "%s", buffer);
         }
 
-        // Sort the names
-        for (int i = 0; i < index; ++i) {
-            for (int j = 0; j < index - i - 1; j++) {
-                // Compare first letter of each name
-                if (names[j][0] > names[j + 1][0]) {
-                    char *name = (char *) malloc(strlen(buffer) + 1);
-                    strcpy(name, names[j]);
-                    names[j] = names[j + 1];
-                    names[j + 1] = name;
-                }
-            }
-        }
-
-        // print the names
-        for (int i = 0; i < index; i++) {
-            printf("%s\n", names[i]);
-        }
-
+        sortListOfNames(names, index);
+        printNames(names, index);
     }
 
     return 0;
