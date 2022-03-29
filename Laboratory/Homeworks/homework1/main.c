@@ -52,12 +52,6 @@ int main() {
 
         sortListOfNames(names, index);
         printNames(names, index);
-
-        // free the memory
-        for(int it = 0; it < index; ++it)
-        {
-            free(names[it]);
-        }
     }
 
     return 0;
