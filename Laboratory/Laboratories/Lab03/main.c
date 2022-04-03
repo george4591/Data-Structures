@@ -92,7 +92,7 @@ void insertNode(Node** head, Student* info)
 {
     // 1,connect node to the structure
 
-    Node* node = createInfo(node);
+    Node* node = createNode(info);
     node->pNext = *head;
 
 
@@ -104,7 +104,7 @@ Node* insertTail(Node* head, Student* info)
 {
     // 1,connect node to the structure
 
-    Node* node = createInfo(node);
+    Node* node = createNode(info);
 
     if (head == NULL)
     {
