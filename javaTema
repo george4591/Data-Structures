@@ -1,0 +1,142 @@
+package ro.ase.acs.classes;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class Utils {
+	public static DataSeriesOperation anonymousOperation = new DataSeriesOperation() {
+
+		@Override
+		public Double doOperation(Integer[] values) {
+			return Arrays.asList(values)
+					.stream()
+					.mapToDouble(Integer::doubleValue)
+					.reduce(1, (a, b) -> a * b);
+		}
+	};
+
+	public static DataSeriesOperation lambdaOperation = (Integer[] values) -> {
+		double sum = Arrays.asList(values).stream().mapToDouble(Integer::doubleValue).sum();
+		return sum / values.length;
+	};
+
+	public static Integer[] input = new Integer[] { 2, 5, 7 };
+
+	public static Double result = null;
+
+	public static Runnable runnable = null;
+
+	public static Callable<Double> callable = null;
+
+	public static Stream<String> getCardsBySuit(List<String> cards, char suit) {
+		if (cards.stream().anyMatch(card -> card.contains((Character.toString(suit))))) {
+			return cards.stream()
+					.filter(card -> card.contains(Character.toString(suit)));
+		}
+
+		return null;
+	}
+
+	public static Stream<String> getCardsByRank(List<String> cards, char rank) {
+		return cards.stream()
+				.distinct()
+				.filter(card -> card.contains(Character.toString(rank)))
+				.sorted();
+	}
+	
+	public static int convertCardToRank(char card)
+	{
+		int rank = 0;
+		try {
+			rank = Integer.parseInt(Character.toString(card)) - 1;
+		}
+		catch(NumberFormatException e)
+		{
+			switch(card)
+			{
+			case 'T':
+				rank = 9;
+				break;
+			case 'J':
+				rank = 10;
+				break;
+			case 'Q':
+				rank = 11;
+				break;
+			case 'K':
+				rank = 12;
+				break;
+			case 'A':
+				rank = 13;
+				break;
+			}
+		}
+		
+		return rank;
+	}
+	
+	public static boolean isCardLower(String card, char rank)
+	{	
+		return convertCardToRank(card.charAt(0)) < convertCardToRank(rank); 
+	}
+
+	public static Stream<String> getCardsLowerThan(List<String> cards, char rank) {
+		return cards.stream()
+				.filter(card -> isCardLower(card, rank));
+	}
+
+	public static Stream<String> getCardsLowerThanSorted(List<String> cards, char rank) {
+		List<String> cardsLowerThanRank = getCardsLowerThan(cards, rank).collect(Collectors.toList());
+		
+		Stream<String> cardsSorted = cardsLowerThanRank
+				.stream()
+				.filter(card -> card.contains("S"));
+		
+		cardsSorted = Stream.concat(cardsSorted, cardsLowerThanRank
+				.stream()
+				.filter(card -> card.contains("D")));
+		
+		cardsSorted = Stream.concat(cardsSorted, cardsLowerThanRank
+				.stream()
+				.filter(card -> card.contains("H")));
+		
+		cardsSorted = Stream.concat(cardsSorted, cardsLowerThanRank
+				.stream()
+				.filter(card -> card.contains("C")));
+		
+		return cardsSorted;
+	}
+
+	public static String printDeckRanks(Stream<String> cards) {
+		
+		
+		return null;
+	}
+}
+
+
+
+package ro.ase.acs.classes;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+@FunctionalInterface
+public interface DataSeriesOperation {
+	public Double doOperation(Integer[] values);
+	
+	public default String transformArray(Integer[] values)
+	{
+		String asString = new String();
+		
+		for(int it = 0; it < values.length - 1; ++it)
+		{
+			asString += values[it].toString() + ", "; 
+		}
+		
+		return asString + values[values.length - 1];
+	};
+}
